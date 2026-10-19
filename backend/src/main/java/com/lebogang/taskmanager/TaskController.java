@@ -1,24 +1,39 @@
 
 package com.lebogang.taskmanager;
 
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class TaskController {
+
+    private final TaskService taskService;
+
+    public TaskController(TaskService taskService) {
+        this.taskService = taskService;
+    }
 
     @GetMapping("/api/hello")
     public String hello() {
         return "Welcome to Student Task Manager!";
     }
 
-    @GetMapping("/api/tasks/demo")
-    public Task getDemoTask() {
-        return new Task(
-                1L,
-                "Study Java",
-                "Practise building REST APIs",
-                false);
+    @GetMapping("/api/tasks")
+    public List<Task> getAllTasks() {
+        return taskService.getAllTasks();
     }
 
+    @GetMapping("/api/tasks/{id}")
+    public ResponseEntity<Task> getTaskById(@PathVariable Long id) {
+        Optional<Task> task = taskService.getTaskById(id);
+
+        return task
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
 }

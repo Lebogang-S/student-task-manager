@@ -1,6 +1,7 @@
 
 package com.lebogang.taskmanager;
 
+// Import classes for working with SQL statements and database results.
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -9,6 +10,7 @@ import java.sql.Timestamp;
 import java.util.List;
 import java.util.Optional;
 
+// Import Spring JDBC classes for communicating with MySQL.
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -18,12 +20,16 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class TaskRepository {
 
+    // 1. DATABASE CONNECTION
+    // JdbcTemplate helps us execute SQL statements against MySQL.
     private final JdbcTemplate jdbcTemplate;
 
     public TaskRepository(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 
+    // 2. CONVERT DATABASE ROWS INTO TASK OBJECTS
+    // This mapper reads a database row and converts it into a Task.
     private final RowMapper<Task> taskRowMapper = new RowMapper<Task>() {
         @Override
         public Task mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -37,11 +43,15 @@ public class TaskRepository {
                     rs.getString("description"),
                     dueDate != null ? dueDate.toLocalDate() : null,
                     rs.getBoolean("completed"),
-                    createdAt != null ? createdAt.toLocalDateTime() : null
+                    createdAt != null
+                            ? createdAt.toLocalDateTime()
+                            : null
             );
         }
     };
 
+    // 3. FIND ALL TASKS
+    // Retrieves every task, with the newest tasks appearing first.
     public List<Task> findAll() {
 
         String sql = """
@@ -53,6 +63,8 @@ public class TaskRepository {
         return jdbcTemplate.query(sql, taskRowMapper);
     }
 
+    // 4. FIND ONE TASK BY ID
+    // Returns an Optional containing the task if it exists.
     public Optional<Task> findById(Long id) {
 
         String sql = """
@@ -66,6 +78,8 @@ public class TaskRepository {
         return tasks.stream().findFirst();
     }
 
+    // 5. CREATE A NEW TASK
+    // Saves a new task and retrieves its generated database ID.
     public Task create(CreateTaskRequest request) {
 
         String sql = """
@@ -112,6 +126,8 @@ public class TaskRepository {
                 ));
     }
 
+    // 6. UPDATE AN EXISTING TASK
+    // Changes the task details and returns the updated task.
     public Task update(Long id, UpdateTaskRequest request) {
 
         String sql = """
@@ -142,5 +158,19 @@ public class TaskRepository {
                 .orElseThrow(() -> new IllegalStateException(
                         "The task was updated but could not be retrieved."
                 ));
+    }
+
+    // 7. DELETE A TASK BY ID
+    // Deletes the matching task and reports whether a row was deleted.
+    public boolean deleteById(Long id) {
+
+        String sql = """
+                DELETE FROM tasks
+                WHERE id = ?
+                """;
+
+        int rowsDeleted = jdbcTemplate.update(sql, id);
+
+        return rowsDeleted > 0;
     }
 }

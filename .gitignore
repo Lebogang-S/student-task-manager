@@ -1,0 +1,23 @@
+
+# Environment variables and secrets
+.env
+.env.*
+!.env.example
+
+# Java build output
+*.class
+*.jar
+*.war
+*.log
+target/
+backend/target/
+
+# IDE settings
+.vscode/
+.idea/
+nbproject/private/
+
+# Operating system files
+.DS_Store
+Thumbs.db
+desktop.ini

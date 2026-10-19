@@ -11,4 +11,14 @@ public class TaskController {
     public String hello() {
         return "Welcome to Student Task Manager!";
     }
+
+    @GetMapping("/api/tasks/demo")
+    public Task getDemoTask() {
+        return new Task(
+                1L,
+                "Study Java",
+                "Practise building REST APIs",
+                false);
+    }
+
 }

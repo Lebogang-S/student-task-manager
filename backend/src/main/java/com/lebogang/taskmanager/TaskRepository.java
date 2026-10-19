@@ -1,14 +1,18 @@
 
 package com.lebogang.taskmanager;
 
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -58,5 +62,50 @@ public class TaskRepository {
         List<Task> tasks = jdbcTemplate.query(sql, taskRowMapper, id);
 
         return tasks.stream().findFirst();
+    }
+
+    public Task create(CreateTaskRequest request) {
+
+        String sql = """
+                INSERT INTO tasks (title, description, due_date, completed)
+                VALUES (?, ?, ?, FALSE)
+                """;
+
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+
+        jdbcTemplate.update(connection -> {
+            PreparedStatement statement = connection.prepareStatement(
+                    sql,
+                    Statement.RETURN_GENERATED_KEYS
+            );
+
+            statement.setString(1, request.getTitle());
+            statement.setString(2, request.getDescription());
+
+            if (request.getDueDate() != null) {
+                statement.setDate(
+                        3,
+                        java.sql.Date.valueOf(request.getDueDate())
+                );
+            } else {
+                statement.setNull(3, java.sql.Types.DATE);
+            }
+
+            return statement;
+
+        }, keyHolder);
+
+        Number generatedId = keyHolder.getKey();
+
+        if (generatedId == null) {
+            throw new IllegalStateException(
+                    "The database did not return the new task ID."
+            );
+        }
+
+        return findById(generatedId.longValue())
+                .orElseThrow(() -> new IllegalStateException(
+                        "The task was saved but could not be retrieved."
+                ));
     }
 }

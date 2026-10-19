@@ -2,17 +2,19 @@
 package com.lebogang.taskmanager;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@RequestMapping("/api/tasks")
 public class TaskController {
 
     private final TaskService taskService;
@@ -21,26 +23,20 @@ public class TaskController {
         this.taskService = taskService;
     }
 
-    @GetMapping("/api/hello")
-    public String hello() {
-        return "Welcome to Student Task Manager!";
-    }
-
-    @GetMapping("/api/tasks")
+    @GetMapping
     public List<Task> getAllTasks() {
         return taskService.getAllTasks();
     }
 
-    @GetMapping("/api/tasks/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<Task> getTaskById(@PathVariable Long id) {
-        Optional<Task> task = taskService.getTaskById(id);
 
-        return task
+        return taskService.getTaskById(id)
                 .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+                .orElse(ResponseEntity.notFound().build());
     }
 
-    @PostMapping("/api/tasks")
+    @PostMapping
     public ResponseEntity<Task> createTask(
             @RequestBody CreateTaskRequest request) {
 
@@ -49,5 +45,19 @@ public class TaskController {
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(createdTask);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Task> updateTask(
+            @PathVariable Long id,
+            @RequestBody UpdateTaskRequest request) {
+
+        Task updatedTask = taskService.updateTask(id, request);
+
+        if (updatedTask == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok(updatedTask);
     }
 }

@@ -27,32 +27,68 @@ public class TaskService {
 
         if (request == null) {
             throw new IllegalArgumentException(
-                    "Task details are required."
+                    "Task information is required."
             );
         }
 
-        if (request.getTitle() == null
-                || request.getTitle().isBlank()) {
+        validateTitle(request.getTitle());
+
+        if (request.getDescription() != null
+                && request.getDescription().length() > 1000) {
+            throw new IllegalArgumentException(
+                    "Description must not exceed 1000 characters."
+            );
+        }
+
+        return taskRepository.create(request);
+    }
+
+    public Task updateTask(Long id, UpdateTaskRequest request) {
+
+        if (id == null || id <= 0) {
+            throw new IllegalArgumentException(
+                    "Task ID must be a positive number."
+            );
+        }
+
+        if (request == null) {
+            throw new IllegalArgumentException(
+                    "Task information is required."
+            );
+        }
+
+        validateTitle(request.getTitle());
+
+        if (request.getDescription() != null
+                && request.getDescription().length() > 1000) {
+            throw new IllegalArgumentException(
+                    "Description must not exceed 1000 characters."
+            );
+        }
+
+        if (request.getCompleted() == null) {
+            throw new IllegalArgumentException(
+                    "Completed status must be provided."
+            );
+        }
+
+        return taskRepository.findById(id)
+                .map(existingTask -> taskRepository.update(id, request))
+                .orElse(null);
+    }
+
+    private void validateTitle(String title) {
+
+        if (title == null || title.isBlank()) {
             throw new IllegalArgumentException(
                     "Task title is required."
             );
         }
 
-        String title = request.getTitle().trim();
-
         if (title.length() > 150) {
             throw new IllegalArgumentException(
-                    "Task title must not exceed 150 characters."
+                    "Title must not exceed 150 characters."
             );
         }
-
-        if (request.getDescription() != null
-                && request.getDescription().length() > 1000) {
-            throw new IllegalArgumentException(
-                    "Task description must not exceed 1000 characters."
-            );
-        }
-
-        return taskRepository.create(request);
     }
 }

@@ -43,6 +43,7 @@ public class TaskRepository {
     };
 
     public List<Task> findAll() {
+
         String sql = """
                 SELECT id, title, description, due_date, completed, created_at
                 FROM tasks
@@ -53,6 +54,7 @@ public class TaskRepository {
     }
 
     public Optional<Task> findById(Long id) {
+
         String sql = """
                 SELECT id, title, description, due_date, completed, created_at
                 FROM tasks
@@ -74,6 +76,7 @@ public class TaskRepository {
         KeyHolder keyHolder = new GeneratedKeyHolder();
 
         jdbcTemplate.update(connection -> {
+
             PreparedStatement statement = connection.prepareStatement(
                     sql,
                     Statement.RETURN_GENERATED_KEYS
@@ -106,6 +109,38 @@ public class TaskRepository {
         return findById(generatedId.longValue())
                 .orElseThrow(() -> new IllegalStateException(
                         "The task was saved but could not be retrieved."
+                ));
+    }
+
+    public Task update(Long id, UpdateTaskRequest request) {
+
+        String sql = """
+                UPDATE tasks
+                SET title = ?,
+                    description = ?,
+                    due_date = ?,
+                    completed = ?
+                WHERE id = ?
+                """;
+
+        int rowsUpdated = jdbcTemplate.update(
+                sql,
+                request.getTitle(),
+                request.getDescription(),
+                request.getDueDate() != null
+                        ? java.sql.Date.valueOf(request.getDueDate())
+                        : null,
+                request.getCompleted(),
+                id
+        );
+
+        if (rowsUpdated == 0) {
+            return null;
+        }
+
+        return findById(id)
+                .orElseThrow(() -> new IllegalStateException(
+                        "The task was updated but could not be retrieved."
                 ));
     }
 }

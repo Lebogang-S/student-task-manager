@@ -26,9 +26,9 @@ The application will allow students to:
 
 ## Project Structure
 
-- `frontend/` — website interface.
-- `backend/` — Spring Boot REST API.
-- `database/` — database scripts and setup instructions.
+- `frontend/` - Website interface.
+- `backend/` - Spring Boot REST API.
+- `database/` - Database scripts and setup instructions.
 
 ## Development Approach
 

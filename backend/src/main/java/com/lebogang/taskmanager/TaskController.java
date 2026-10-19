@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,11 +16,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@CrossOrigin(origins = {
+        "http://localhost:5500",
+        "http://127.0.0.1:5500",
+        "http://localhost:5501",
+        "http://127.0.0.1:5501"
+})
 @RequestMapping("/api/tasks")
 public class TaskController {
 
     // 1. SERVICE CONNECTION
-    // The controller uses TaskService to handle task operations.
+    // The controller delegates task operations to TaskService.
     private final TaskService taskService;
 
     public TaskController(TaskService taskService) {
@@ -37,7 +44,6 @@ public class TaskController {
     // GET /api/tasks/{id}
     @GetMapping("/{id}")
     public ResponseEntity<Task> getTaskById(@PathVariable Long id) {
-
         return taskService.getTaskById(id)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
@@ -83,7 +89,7 @@ public class TaskController {
             return ResponseEntity.notFound().build();
         }
 
-        // HTTP 204 means deletion succeeded and there is no response body.
+        // HTTP 204 means the task was deleted successfully.
         return ResponseEntity.noContent().build();
     }
 }

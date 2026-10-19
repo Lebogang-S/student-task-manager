@@ -1,0 +1,101 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Page settings -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Browser tab title -->
+    <title>Student Task Manager</title>
+
+    <!-- Connect the CSS stylesheet -->
+    <link rel="stylesheet" href="css/style.css">
+
+    <!-- JavaScript files will load after the HTML is parsed -->
+    <script src="js/api.js" defer></script>
+    <script src="js/app.js" defer></script>
+</head>
+<body>
+    <!-- Main application header -->
+    <header class="app-header">
+        <div class="container">
+            <h1>Student Task Manager</h1>
+            <p>Plan your studies. Track your progress. Reach your goals.</p>
+        </div>
+    </header>
+
+    <!-- Main page content -->
+    <main class="container">
+        <section class="welcome-section">
+            <h2>Your tasks, all in one place</h2>
+            <p>Create, update, complete, and delete your study tasks.</p>
+        </section>
+
+        <!-- Form for creating tasks -->
+        <section class="task-form-section">
+            <h2>Add a new task</h2>
+
+            <form id="task-form">
+                <div class="form-group">
+                    <label for="title">Task title</label>
+                    <input
+                        type="text"
+                        id="title"
+                        name="title"
+                        maxlength="150"
+                        placeholder="e.g. Study Java"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="description">Description</label>
+                    <textarea
+                        id="description"
+                        name="description"
+                        maxlength="1000"
+                        placeholder="Describe what you need to do"
+                    ></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="due-date">Due date</label>
+                    <input
+                        type="date"
+                        id="due-date"
+                        name="dueDate"
+                    >
+                </div>
+
+                <button type="submit">Add task</button>
+            </form>
+
+            <p id="form-message" role="status" aria-live="polite"></p>
+        </section>
+
+        <!-- Existing tasks will appear here -->
+        <section class="tasks-section">
+            <div class="tasks-heading">
+                <h2>Your tasks</h2>
+                <button type="button" id="refresh-tasks" class="secondary-button">
+                    Refresh
+                </button>
+            </div>
+
+            <p id="tasks-message" role="status" aria-live="polite">
+                Loading tasks...
+            </p>
+
+            <div id="task-list" class="task-list"></div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+        <div class="container">
+            <p>Student Task Manager — Learn, plan, and progress.</p>
+        </div>
+    </footer>
+</body>
+</html>

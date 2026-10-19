@@ -1,23 +1,80 @@
 
+# ==========================================
 # Environment variables and secrets
+# ==========================================
 .env
 .env.*
 !.env.example
 
-# Java build output
+# Private keys and certificates
+*.pem
+*.key
+*.p12
+*.pfx
+*.keystore
+
+# ==========================================
+# Java compiled files and build output
+# ==========================================
 *.class
 *.jar
 *.war
+*.ear
 *.log
 target/
 backend/target/
 
+# ==========================================
+# Maven wrapper - keep wrapper scripts and config
+# ==========================================
+# Do not ignore mvnw, mvnw.cmd, or .mvn/wrapper/
+
+# ==========================================
 # IDE settings
+# ==========================================
 .vscode/
 .idea/
 nbproject/private/
+*.iml
+.project
+.classpath
+.settings/
 
+# ==========================================
 # Operating system files
+# ==========================================
 .DS_Store
 Thumbs.db
 desktop.ini
+ehthumbs.db
+
+# ==========================================
+# Temporary files and backups
+# ==========================================
+*.tmp
+*.temp
+*.bak
+*.swp
+*.swo
+*~
+
+# ==========================================
+# Test and coverage reports
+# ==========================================
+coverage/
+jacoco.exec
+site/
+
+# ==========================================
+# Frontend dependencies and build output
+# ==========================================
+node_modules/
+dist/
+build/
+
+# ==========================================
+# Local database exports and backups
+# ==========================================
+*.sql.bak
+*.dump
+*.backup
